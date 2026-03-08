@@ -1,2 +1,2 @@
 # Alpha
-## This is a primary depot of a rookie 
+## This is a primary depot of a rookie！
