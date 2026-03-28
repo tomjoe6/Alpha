@@ -1,0 +1,3 @@
+{"text": "Hello, this is a tiny dataset for testing model fine-tuning."}
+{"text": "This example shows how to prepare data in JSONL format for training."}
+{"text": "You can replace this file with your own cleaned dataset for larger experiments."}

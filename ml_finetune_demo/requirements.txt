@@ -1,0 +1,7 @@
+transformers>=4.35.0
+datasets>=2.13.0
+accelerate>=0.19.0
+peft>=0.4.0
+sentencepiece
+safetensors
+# torch 已通过 conda 安装（使用 conda 的 cuda 版本）
