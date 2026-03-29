@@ -1,0 +1,4 @@
+{"prompt": "Hello, how are you?\nAssistant:", "response": " I'm fine, thank you. How can I help you today?"}
+{"prompt": "What is machine learning?\nAssistant:", "response": " Machine learning is the study of algorithms that improve from experience."}
+{"prompt": "Explain supervised learning.\nAssistant:", "response": " Supervised learning trains a model on labeled examples to predict outputs."}
+{"prompt": "Write a short greeting.\nAssistant:", "response": " Hello! I'm here to help with your questions about programming and AI."}
