@@ -190,7 +190,7 @@ def train(tr_set, dv_set, model, config, device):
             # Save model if your model improved
             min_mse = dev_mse
             print('Saving model (epoch = {:4d}, loss = {:.4f})'
-                .format(epoch + 1, min_mse))
+                3(epoch + 1, min_mse))
             torch.save(model.state_dict(), config['save_path'])  # Save model to specified path
             early_stop_cnt = 0
         else:
@@ -249,10 +249,12 @@ config = {
 tr_set = prep_dataloader(tr_path, 'train', config['batch_size'], target_only=target_only)
 dv_set = prep_dataloader(tr_path, 'dev', config['batch_size'], target_only=target_only)
 tt_set = prep_dataloader(tt_path, 'test', config['batch_size'], target_only=target_only)
+
 model = NeuralNet(tr_set.dataset.dim).to(device)  # Construct model and move to device
 model_loss, model_loss_record = train(tr_set, dv_set, model, config, device)
 plot_learning_curve(model_loss_record, title='deep model')
 del model
+
 model = NeuralNet(tr_set.dataset.dim).to(device)
 ckpt = torch.load(config['save_path'], map_location='cpu')  # Load your best model
 model.load_state_dict(ckpt)
