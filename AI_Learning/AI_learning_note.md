@@ -73,7 +73,7 @@ Loss：一组权重+bias好的程度，如何判断？拿已知的多个数值(f
 >优化方法Optimization：梯度下降Gradient Descent  
 ### 对于线性模型y=wx+b
 先不看bias，仅变化权重w观察Loss变化————先随机取w0，然后计算w0 - η*(w0处L关于w导数)，直到 ①变化次数太多，手动停下②L关于w微分为0   
->超参数Hyperparameter：需要手动设置的参数，即上述的η(Learning Rate学习速率)、变化上限次数  
+>超参数Hyperparameter：需要手动设置的参数，即上述的η(Learning Rate学习速率)、变化上限次数、Batch size  
 
 一个小问题是两种停止方式停在的那点(Local Minima)都不一定是找到最好的那点(Global Minima)，但这并不重要（后面会讲）  
  
@@ -123,7 +123,8 @@ Loss函数就变成L(**θ**)
 ### 模型训练
 模型层数大dev与training loss却比简单模型差：optimization出问题，而不是overfitting，如果是overfitting，training loss应该会降低  
 
-Overfitting：解决办法  
+Overfitting：解决办法 
+Regularization正则化是在Loss Function中加入惩罚项（一个有关未知参数的项，如：L1——权重绝对值之和；L2——权重平方和）可以缓解为了不断贴近train点而急剧变化的权重 
 ![alt text](image-8.png)  
 
 Mismatch:和overfitting有点像，但是偏向是overfitting是只会记训练资料不会变通但是train和dev总体没有很大区别，mismatch指的则是给出的训练资料就是不正确与实际运用资料不是一个方向的  
@@ -136,4 +137,23 @@ Optimization：Loss随着层数不下降了，可能卡在gradient为0点即crit
 在critical point 绿色部分为0，看红色部分，始终<0则maxima，>0则minima，有大有小saddle。
 **也即：看H矩阵的特征值eigen value，恒正maxima，恒负minima，有正有负saddle** 
 **当是saddle的时候，设某个特征值λ<0对应特征向量为u，令新θ=θ'+u即可继续降低loss**  
-![alt text](image-10.png)
+![alt text](image-10.png)  
+
+Batch:一次参数update用到的数据组，越小越noisy，但是由于更新次数多，每次算Loss函数都不一样，不容易卡在local minima特别是陡峭的minima，**表现更好**。由于GPU有并行计算能力，所以在一定的batch size范围内完成一个batch计算的时间是接近的，所以适当增加batch size**有利于效率**  
+
+Momentum:惯性方法，克服小坡继续寻找低点，即**θ**原来是**θ0**-η**g**，现在是记录每次移动方向**m**，**θ**=**θ0**+λ**m0**--η**g**  
+
+Adaptive Learning Rate：按照前进方向陡峭程度，比如每次学习率η改为RMS  
+![alt text](image-12.png)  
+
+改进为RMSProp，减少太久远的g对现在的影响    
+![alt text](image-13.png)  
+
+RMSP+Momentum就是**Adam**方法  
+
+Learning Rate Decay:η慢慢下降
+Warm Up ：η先升后降
+
+有warm up的adam：RAdam  
+
+Loss Function的优化：Softmax函数与Cross Entropy交叉熵(使用CE默认在最后一层调用Softmax)：对一个一维向量，把其中所有元素变成$\frac{Exp原元素}{\sum Exp元素}$归一化（相加为1），Loss函数定义为$-\sum y_{label}*ln (输出概率)$
