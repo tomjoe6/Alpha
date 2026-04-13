@@ -1,4 +1,5 @@
 import argparse
+import torch
 from datasets import load_dataset
 from transformers import (
     AutoTokenizer,
@@ -11,7 +12,7 @@ from transformers import (
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--model_name", default="gpt2")
+    p.add_argument("--model_name", default="microsoft/DialoGPT-small")
     p.add_argument("--train_file", default="data/train.jsonl")
     p.add_argument("--output_dir", default="output")
     p.add_argument("--num_train_epochs", type=int, default=1)
@@ -48,7 +49,7 @@ def main():
         per_device_train_batch_size=args.per_device_train_batch_size,
         logging_steps=10,
         save_steps=100,
-        fp16=True,
+        fp16=torch.cuda.is_available(),
         remove_unused_columns=False,
     )
 

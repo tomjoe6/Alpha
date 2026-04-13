@@ -1,3 +1,30 @@
-{"prompt": "你好，今天天气怎么样？\nAssistant:", "response": " 那広Ｃ７ง ５트더요그 도문사을 헍장이혀의 있이 신없요동에서을 어"}
-{"prompt": "请给我写一段关于机器学习入门的简短介绍。\nAssistant:", "response": " \"The young lady is extremely adorable. There are really only two people in my life who can understand me. One, the girl is my grandmother, and the second, her grandma is the head of the military. How could that be possible?\" 安兹之认只说发让儿就会至。 \"But"}
-{"prompt": "帮我把这句话翻译成英文：我喜欢学习人工智能。\nAssistant:", "response": " 这是的话,能就这么头持大学像戒相想爱建啊。\n\n这是啊你制地量制实疑的沢下的员绐。"}
+{"prompt": "User: Hello!\nAssistant:", "response": " Hi there! How can I help you today?"}
+{"prompt": "User: It's a nice day, right?\nAssistant:", "response": " Yes, it is. The weather feels great today."}
+{"prompt": "User: I have zero coding experience. Where should I start?\nAssistant:", "response": " Start with Python basics: variables, loops, functions, and simple scripts. Then practice every day with small projects."}
+{"prompt": "User: What is machine learning in one sentence?\nAssistant:", "response": " Machine learning teaches computers to find patterns from data and make predictions."}
+{"prompt": "User: Explain supervised learning simply.\nAssistant:", "response": " Supervised learning trains a model with labeled examples, so it can predict outputs for new inputs."}
+{"prompt": "User: What is overfitting?\nAssistant:", "response": " Overfitting means the model memorizes training data and performs poorly on new data."}
+{"prompt": "User: How can I reduce overfitting?\nAssistant:", "response": " Use more data, apply regularization, simplify the model, and validate with a separate dataset."}
+{"prompt": "User: What is a validation set?\nAssistant:", "response": " A validation set is data used during training to evaluate model performance and tune settings."}
+{"prompt": "User: What does learning rate do?\nAssistant:", "response": " Learning rate controls how large each parameter update is during training."}
+{"prompt": "User: Why does my model always answer 'Hello'?\nAssistant:", "response": " Your training data is likely repetitive. Add diverse question-answer pairs and remove duplicated short responses."}
+{"prompt": "User: Give me a short study plan for AI.\nAssistant:", "response": " Week 1-2: Python and math basics. Week 3-4: machine learning basics. Week 5-6: deep learning intro and mini projects."}
+{"prompt": "User: How do I clean training data?\nAssistant:", "response": " Remove duplicates, fix encoding issues, keep one language per dataset, and drop very short or irrelevant responses."}
+{"prompt": "User: What is tokenization?\nAssistant:", "response": " Tokenization splits text into smaller units that a model can process, such as words or subwords."}
+{"prompt": "User: Can you give me a beginner project idea?\nAssistant:", "response": " Build a sentiment classifier for short reviews and evaluate it on a small test set."}
+{"prompt": "User: What is the difference between training and inference?\nAssistant:", "response": " Training updates model parameters from data, while inference uses fixed parameters to generate predictions."}
+{"prompt": "User: How do I debug a chatbot model?\nAssistant:", "response": " Check data quality first, then verify prompt format, compare checkpoints, and log model outputs for analysis."}
+{"prompt": "User: Explain precision and recall briefly.\nAssistant:", "response": " Precision measures correctness of positive predictions, while recall measures how many actual positives are found."}
+{"prompt": "User: Why is my loss going down but answers still bad?\nAssistant:", "response": " Loss can improve without better dialogue quality if your dataset is narrow, noisy, or poorly aligned with chat behavior."}
+{"prompt": "User: What should I log during training?\nAssistant:", "response": " Log loss, learning rate, evaluation metrics, sample outputs, and key hyperparameters for each run."}
+{"prompt": "User: Give me one tip for better prompts.\nAssistant:", "response": " Be specific about role, task, constraints, and output style to reduce ambiguity."}
+{"prompt": "User: How many epochs should a beginner use?\nAssistant:", "response": " Start with 1 to 3 epochs, evaluate results, and increase only if quality improves without overfitting."}
+{"prompt": "User: What's the purpose of LoRA?\nAssistant:", "response": " LoRA fine-tunes a small set of adapter parameters, making training faster and cheaper."}
+{"prompt": "User: Why is my generated text repetitive?\nAssistant:", "response": " Repetition can come from limited data, weak decoding settings, or insufficient response diversity in training samples."}
+{"prompt": "User: How do I make responses more varied?\nAssistant:", "response": " Use diverse training examples and tune decoding with sampling, temperature, and top-p settings."}
+{"prompt": "User: What is top-p sampling?\nAssistant:", "response": " Top-p sampling selects tokens from the smallest set whose cumulative probability exceeds p."}
+{"prompt": "User: Explain temperature in generation.\nAssistant:", "response": " Temperature adjusts randomness: lower values are safer and higher values are more creative."}
+{"prompt": "User: Should I mix Chinese and English in one tiny dataset?\nAssistant:", "response": " Not for a beginner setup. Keep one language per dataset to avoid unstable outputs."}
+{"prompt": "User: How do I evaluate a chatbot quickly?\nAssistant:", "response": " Prepare a fixed list of test prompts and compare relevance, fluency, and consistency across checkpoints."}
+{"prompt": "User: What is a checkpoint?\nAssistant:", "response": " A checkpoint is a saved model state during training that you can reload for testing or resuming."}
+{"prompt": "User: Summarize this advice in one line.\nAssistant:", "response": " Clean data, consistent format, small iterative experiments, and repeatable evaluation lead to better chat models."}

@@ -5,6 +5,12 @@ SRC = Path("data/dialogs.jsonl")
 DST = Path("data/train_from_dialogs.jsonl")
 DST.parent.mkdir(parents=True, exist_ok=True)
 
+
+def looks_english(text):
+    if not isinstance(text, str):
+        text = str(text)
+    return not any("\u4e00" <= ch <= "\u9fff" for ch in text)
+
 def clean(prompt, response):
     if not isinstance(prompt, str):
         prompt = str(prompt)
@@ -35,7 +41,9 @@ with SRC.open("r", encoding="utf-8") as f_in, DST.open("w", encoding="utf-8") as
         if key in seen:
             continue
         seen.add(key)
-        out = {"prompt": f"{p}\nAssistant:", "response": " " + r}
+        if not looks_english(p) or not looks_english(r):
+            continue
+        out = {"prompt": f"User: {p}\nAssistant:", "response": " " + r}
         f_out.write(json.dumps(out, ensure_ascii=False) + "\n")
         written += 1
 

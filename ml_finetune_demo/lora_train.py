@@ -1,4 +1,6 @@
 import argparse
+import torch
+import re
 from datasets import load_dataset
 from transformers import (
     AutoTokenizer,
@@ -12,7 +14,7 @@ from peft import LoraConfig, get_peft_model
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--model_name_or_path", default="gpt2")
+    p.add_argument("--model_name_or_path", default="microsoft/DialoGPT-small")
     p.add_argument("--train_file", required=True)
     p.add_argument("--output_dir", default="output_lora")
     p.add_argument("--per_device_train_batch_size", type=int, default=1)
@@ -22,6 +24,8 @@ def parse_args():
     p.add_argument("--lora_r", type=int, default=8)
     p.add_argument("--lora_alpha", type=int, default=16)
     p.add_argument("--lora_dropout", type=float, default=0.05)
+    p.add_argument("--system_prompt", default="You are a helpful, concise assistant that always replies in English.")
+    p.add_argument("--drop_non_english", action="store_true", default=True, help="Skip samples containing obvious non-English text")
     return p.parse_args()
 
 
@@ -36,13 +40,34 @@ def main():
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
+    def looks_english(text: str) -> bool:
+        return not any("\u4e00" <= ch <= "\u9fff" for ch in text)
+
+    def normalize_prompt_response(prompt_text: str, response_text: str) -> tuple[str, str]:
+        prompt_text = prompt_text.strip()
+        response_text = response_text.strip()
+
+        # If prompt already contains role tags, extract the latest user part.
+        if "User:" in prompt_text:
+            parts = prompt_text.split("User:")
+            prompt_text = parts[-1].strip()
+        prompt_text = prompt_text.replace("Assistant:", "").strip()
+
+        # Remove accidental role prefixes from response.
+        response_text = re.sub(r"^Assistant:\\s*", "", response_text)
+        response_text = re.sub(r"^User:\\s*", "", response_text)
+        return prompt_text, response_text
+
     def preprocess(examples):
         texts = []
         prompts = examples.get("prompt")
         responses = examples.get("response")
         for p, r in zip(prompts, responses):
-            # format: prompt + response
-            texts.append(str(p) + str(r))
+            prompt_text, response_text = normalize_prompt_response(str(p), str(r))
+            if args.drop_non_english and (not looks_english(prompt_text) or not looks_english(response_text)):
+                continue
+            formatted = f"{args.system_prompt}\nUser: {prompt_text}\nAssistant: {response_text}"
+            texts.append(formatted)
         return tokenizer(texts, truncation=True, padding="max_length", max_length=args.max_seq_length)
 
     tokenized = ds["train"].map(preprocess, batched=True, remove_columns=ds["train"].column_names)
@@ -69,7 +94,7 @@ def main():
         learning_rate=args.learning_rate,
         logging_steps=10,
         save_steps=100,
-        fp16=True,
+        fp16=torch.cuda.is_available(),
         remove_unused_columns=False,
     )
 

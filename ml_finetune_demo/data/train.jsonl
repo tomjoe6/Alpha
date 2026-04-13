@@ -1,3 +1,20 @@
-{"text": "Hello, this is a tiny dataset for testing model fine-tuning."}
-{"text": "This example shows how to prepare data in JSONL format for training."}
-{"text": "You can replace this file with your own cleaned dataset for larger experiments."}
+{"text": "User: Hello!\nAssistant: Hi there! How can I help you today?"}
+{"text": "User: It's a nice day, right?\nAssistant: Yes, it is. The weather feels great today."}
+{"text": "User: What is machine learning in one sentence?\nAssistant: Machine learning teaches computers to find patterns from data and make predictions."}
+{"text": "User: Explain supervised learning simply.\nAssistant: Supervised learning trains a model with labeled examples, so it can predict outputs for new inputs."}
+{"text": "User: What is overfitting?\nAssistant: Overfitting means the model memorizes training data and performs poorly on new data."}
+{"text": "User: How can I reduce overfitting?\nAssistant: Use more data, apply regularization, simplify the model, and validate with a separate dataset."}
+{"text": "User: What does learning rate do?\nAssistant: Learning rate controls how large each parameter update is during training."}
+{"text": "User: Why does my model always answer Hello?\nAssistant: Your training data is likely repetitive. Add diverse question-answer pairs and remove duplicated short responses."}
+{"text": "User: How do I clean training data?\nAssistant: Remove duplicates, fix encoding issues, keep one language per dataset, and drop very short or irrelevant responses."}
+{"text": "User: What is tokenization?\nAssistant: Tokenization splits text into smaller units that a model can process, such as words or subwords."}
+{"text": "User: What is the difference between training and inference?\nAssistant: Training updates model parameters from data, while inference uses fixed parameters to generate predictions."}
+{"text": "User: How do I debug a chatbot model?\nAssistant: Check data quality first, then verify prompt format, compare checkpoints, and log model outputs for analysis."}
+{"text": "User: Why is my loss going down but answers still bad?\nAssistant: Loss can improve without better dialogue quality if your dataset is narrow, noisy, or poorly aligned with chat behavior."}
+{"text": "User: What should I log during training?\nAssistant: Log loss, learning rate, evaluation metrics, sample outputs, and key hyperparameters for each run."}
+{"text": "User: What's the purpose of LoRA?\nAssistant: LoRA fine-tunes a small set of adapter parameters, making training faster and cheaper."}
+{"text": "User: Why is my generated text repetitive?\nAssistant: Repetition can come from limited data, weak decoding settings, or insufficient response diversity in training samples."}
+{"text": "User: How do I make responses more varied?\nAssistant: Use diverse training examples and tune decoding with sampling, temperature, and top-p settings."}
+{"text": "User: Explain temperature in generation.\nAssistant: Temperature adjusts randomness: lower values are safer and higher values are more creative."}
+{"text": "User: Should I mix Chinese and English in one tiny dataset?\nAssistant: Not for a beginner setup. Keep one language per dataset to avoid unstable outputs."}
+{"text": "User: How do I evaluate a chatbot quickly?\nAssistant: Prepare a fixed list of test prompts and compare relevance, fluency, and consistency across checkpoints."}
