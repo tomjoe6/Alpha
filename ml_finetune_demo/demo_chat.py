@@ -23,6 +23,7 @@ def parse_args():
     p.add_argument("--no_repeat_ngram_size", type=int, default=3, help="Avoid repeating n-grams of this size")
     p.add_argument("--history_turns", type=int, default=3, help="How many turns of history to keep")
     p.add_argument("--anti_copy_retry", type=int, default=1, help="Retry count when reply looks like copied user text")
+    p.add_argument("--quality_retry", type=int, default=1, help="Retry count when reply quality looks poor")
     p.add_argument("--log_file", default="data/dialogs.jsonl")
     p.add_argument(
         "--system_prompt",
@@ -88,8 +89,6 @@ def generate_reply(tokenizer, model, prompt: str, args):
     # Keep only the assistant segment and trim obvious repetitive degeneration.
     reply = re.split(r"\n(?:User|Assistant):", reply, maxsplit=1)[0].strip()
     reply = re.sub(r"(?:(?:\b:D\b|\bD:\b|:D|D:)[\s:]*){6,}", ":D", reply)
-    if len(reply) > 30 and len(set(reply)) / max(len(reply), 1) < 0.12:
-        reply = "I generated a repetitive response. Please ask again and I will answer more clearly."
     return reply
 
 
@@ -119,6 +118,30 @@ def is_copy_like(user_text: str, reply: str) -> bool:
     return False
 
 
+def is_repetitive_bad(reply: str) -> bool:
+    text = reply.strip().lower()
+    if len(text) < 40:
+        return False
+
+    tokens = re.findall(r"[a-z0-9']+", text)
+    if len(tokens) < 12:
+        return False
+
+    # Strong token repetition is a practical signal of degeneration.
+    unique_ratio = len(set(tokens)) / max(len(tokens), 1)
+    if unique_ratio < 0.28:
+        return True
+
+    # Detect 3-gram loops like "do this do this do this".
+    ngrams = [tuple(tokens[i : i + 3]) for i in range(len(tokens) - 2)]
+    if ngrams:
+        most_common = max(ngrams.count(g) for g in set(ngrams))
+        if most_common >= 3:
+            return True
+
+    return False
+
+
 def generate_non_copy_reply(tokenizer, model, user_text: str, prompt: str, args):
     normalized_user = _normalize_for_compare(user_text)
     if "do not copy me" in normalized_user or "dont copy me" in normalized_user:
@@ -127,7 +150,20 @@ def generate_non_copy_reply(tokenizer, model, user_text: str, prompt: str, args)
         return "Understood. Tell me what you want me to do instead."
 
     response = generate_reply(tokenizer, model, prompt, args)
+    if is_repetitive_bad(response):
+        repair_prompt = (
+            prompt
+            + "\nInstruction: Give a clear, direct answer with no repeated phrases and no role tags.\nAssistant:"
+        )
+        quality_retries = max(0, int(args.quality_retry))
+        for _ in range(quality_retries):
+            response = generate_reply(tokenizer, model, repair_prompt, args)
+            if not is_repetitive_bad(response):
+                break
+
     if not is_copy_like(user_text, response):
+        if is_repetitive_bad(response):
+            return "I did not generate a stable answer this turn. Please ask again; I will answer more clearly."
         return response
 
     anti_copy_prompt = (
@@ -138,7 +174,7 @@ def generate_non_copy_reply(tokenizer, model, user_text: str, prompt: str, args)
     retries = max(0, int(args.anti_copy_retry))
     for _ in range(retries):
         response = generate_reply(tokenizer, model, anti_copy_prompt, args)
-        if not is_copy_like(user_text, response):
+        if not is_copy_like(user_text, response) and not is_repetitive_bad(response):
             return response
 
     return "Understood. I will reply in original wording instead of mirroring your phrasing."
