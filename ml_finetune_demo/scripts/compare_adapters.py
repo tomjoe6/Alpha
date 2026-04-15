@@ -9,7 +9,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--base_model", default="microsoft/DialoGPT-small")
+    p.add_argument("--base_model", default="Qwen/Qwen2.5-1.5B-Instruct")
     p.add_argument(
         "--adapters",
         default="output_lora,output_lora_v2,output_lora_v3",

@@ -1,0 +1,8 @@
+{
+  "total": 1027,
+  "train": 925,
+  "valid": 102,
+  "valid_ratio": 0.1,
+  "positive_valid_syntax": 948,
+  "negative_invalid_syntax": 79
+}

@@ -1,0 +1,9 @@
+{
+  "input": "data\\train_from_hf_zh.jsonl",
+  "output": "data\\train_from_hf_zh_clean.jsonl",
+  "total": 2508,
+  "kept": 2292,
+  "removed": 216,
+  "truncated": 1992,
+  "kept_ratio": 0.9139
+}

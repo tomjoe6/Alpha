@@ -12,7 +12,7 @@ from transformers import (
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--model_name", default="microsoft/DialoGPT-small")
+    p.add_argument("--model_name", default="Qwen/Qwen2.5-1.5B-Instruct")
     p.add_argument("--train_file", default="data/train.jsonl")
     p.add_argument("--output_dir", default="output")
     p.add_argument("--num_train_epochs", type=int, default=1)

@@ -1,0 +1,10 @@
+{
+  "base_train": 925,
+  "base_valid": 102,
+  "base_positive_train": 856,
+  "base_negative_train": 69,
+  "synthetic_added": 1677,
+  "aug_train": 2602,
+  "aug_positive_train": 856,
+  "aug_negative_train": 1746
+}

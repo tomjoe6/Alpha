@@ -14,19 +14,42 @@ from peft import LoraConfig, get_peft_model
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--model_name_or_path", default="microsoft/DialoGPT-small")
+    p.add_argument("--model_name_or_path", default="Qwen/Qwen2.5-1.5B-Instruct")
     p.add_argument("--train_file", required=True)
     p.add_argument("--output_dir", default="output_lora")
     p.add_argument("--per_device_train_batch_size", type=int, default=1)
     p.add_argument("--num_train_epochs", type=int, default=1)
     p.add_argument("--learning_rate", type=float, default=2e-4)
-    p.add_argument("--max_seq_length", type=int, default=256)
-    p.add_argument("--lora_r", type=int, default=8)
-    p.add_argument("--lora_alpha", type=int, default=16)
+    p.add_argument("--max_seq_length", type=int, default=512)
+    p.add_argument("--lora_r", type=int, default=32)
+    p.add_argument("--lora_alpha", type=int, default=64)
     p.add_argument("--lora_dropout", type=float, default=0.05)
-    p.add_argument("--system_prompt", default="You are a helpful, concise assistant that always replies in English.")
-    p.add_argument("--drop_non_english", action="store_true", default=True, help="Skip samples containing obvious non-English text")
+    p.add_argument("--system_prompt", default="You are a helpful, concise assistant.")
+    p.add_argument("--drop_non_english", type=bool, default=False, help="Skip samples containing obvious non-English text")
     return p.parse_args()
+
+
+def infer_lora_target_modules(model):
+    candidate_groups = [
+        ["q_proj", "k_proj", "v_proj", "o_proj"],
+        ["query_key_value"],
+        ["c_attn"],
+    ]
+
+    available_leaf_names = set()
+    for name, module in model.named_modules():
+        if not name:
+            continue
+        if hasattr(module, "weight"):
+            available_leaf_names.add(name.split(".")[-1])
+
+    for group in candidate_groups:
+        if all(g in available_leaf_names for g in group):
+            return group
+    for group in candidate_groups:
+        if any(g in available_leaf_names for g in group):
+            return [g for g in group if g in available_leaf_names]
+    return ["c_attn"]
 
 
 def main():
@@ -68,17 +91,22 @@ def main():
                 continue
             formatted = f"{args.system_prompt}\nUser: {prompt_text}\nAssistant: {response_text}"
             texts.append(formatted)
+        # Return empty tokenization if all samples filtered (prevents IndexError)
+        if not texts:
+            return {"input_ids": [], "attention_mask": []}
         return tokenizer(texts, truncation=True, padding="max_length", max_length=args.max_seq_length)
 
     tokenized = ds["train"].map(preprocess, batched=True, remove_columns=ds["train"].column_names)
 
     model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path)
+    target_modules = infer_lora_target_modules(model)
+    print(f"LoRA target modules: {target_modules}")
 
     print("Applying LoRA...")
     lora_config = LoraConfig(
         r=args.lora_r,
         lora_alpha=args.lora_alpha,
-        target_modules=["c_attn"],
+        target_modules=target_modules,
         lora_dropout=args.lora_dropout,
         bias="none",
         task_type="CAUSAL_LM",

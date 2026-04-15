@@ -21,7 +21,9 @@ Python的索引除了0,1,2,3还同时对应-n,-n+1等，也就是说十位列表
 字典：`d = {'name': 'Tom', 'age': 20}， print('{name} {age}'.format(**d))`
 
 
-正则表达式，如`result=re.match(r'(\w+) is \$(\d+)\.(\d+)' , 'rice is $5.00')`括号表示分组，使用`result.group(n)`选出第n个括号里的东西，且`+`表示匹配一个或多个，`?`表示零个或一个，`*`表示零个或多个
+正则表达式，如`result=re.match(r'(\w+) is \$(\d+)\.(\d+)' , 'rice is $5.00')`括号表示分组，使用`result.group(n)`选出第n个括号里的东西，且`+`表示匹配一个或多个，`?`表示零个或一个，`*`表示零个或多个  
+
+`Store_true`在参数中表示不写为false，写了就是true，如`p.add_argument("--do_sample", action="store_true)"`
 
 ### Numpy:  
 dtype:  

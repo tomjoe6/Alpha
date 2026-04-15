@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "tool": "iverilog",
+  "total": 2602,
+  "changed_labels": 707,
+  "kept_labels": 1895,
+  "positive": 663,
+  "negative": 1939
+}
