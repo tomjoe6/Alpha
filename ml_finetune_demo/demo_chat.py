@@ -15,7 +15,7 @@ def parse_args():
     p.add_argument("--model_name_or_path", default="Qwen/Qwen2.5-1.5B-Instruct")
     p.add_argument("--adapter_dir", default=None, help="LoRA adapter directory, e.g. output_lora")
     p.add_argument("--device", type=int, default=-1, help="-1 for CPU, 0 for the first GPU")
-    p.add_argument("--max_new_tokens", type=int, default=100)
+    p.add_argument("--max_new_tokens", type=int, default=200)
     p.add_argument("--temperature", type=float, default=0.7)
     p.add_argument("--top_p", type=float, default=0.9)
     p.add_argument("--do_sample", action="store_true", help="Enable sampling for more diverse replies")

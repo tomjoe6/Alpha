@@ -158,4 +158,28 @@ Warm Up ：η先升后降
 
 有warm up的adam：RAdam  
 
-Loss Function的优化：Softmax函数与Cross Entropy交叉熵(使用CE默认在最后一层调用Softmax)：对一个一维向量，把其中所有元素变成$\frac{Exp原元素}{\sum Exp元素}$归一化（相加为1），Loss函数定义为$-\sum y_{label}*ln (输出概率)$
+Loss Function的优化：Softmax函数与Cross Entropy交叉熵(使用CE默认在最后一层调用Softmax)：对一个一维向量，把其中所有元素变成$\frac{Exp原元素}{\sum Exp元素}$归一化（相加为1），Loss函数定义为$-\sum y_{label}*ln (输出概率)$  
+
+### 模型分类  
+#### CNN卷积神经网络：
+应用1 影像识别  
+图片由三维tensor组成————长/宽/channel（RGB三层） 
+每个neural分治一小部分receptive field(感受野)，判断一个pattern  
+receptive field大小为kernel size，常见为3*3  
+平移获得另外一个field的距离为stride，一般为1\2让field之间有重叠 ，如果不断按照stride超出影响范围就做padding(补值)，可以补0\补全图平均什么的    
+
+Convolution：Convolutional layer 中先取一个确定的Filter，取图片中按照给定的stride每个field一个一个进行点对点相乘求和(卷积)，得出每个field的和，每个filter与图片每个field运算得出一个feature map，所有feature maps叠起来可以看作一张新图片(若有64个filter就有64channels)。如果继续叠加convolutional layer，那么下一层filter要有64个channel
+
+3\*3的field好像很小？其实在经过一次stride为1的layer后会发现，新图片中的3\*3区域实际上包括了原图片中的5\*5
+
+可以理解为一个filter用于判断某些pattern，卷积一层就得出“哪里相似度高”的新图片  
+
+Pooling池化：减少运算量。feature map里分组，选择组中某一个，缩小图片(如2*2只取一个值缩小为1个)
+
+Flatten：老CNN常用(现代直接Global Average Pooling为单列向量送入softmax)
+经过卷积、池化后向量flatten拍扁，用于塞进全连接层(将学到的“分布式特征表示”映射到样本标记空间)，最后处理输出
+
+
+CNN应用2 下围棋。  
+下围棋是一个19\*19个目标的分类问题。某个位置有黑、白子或无东西设定数字。为什么CNN比普通全连接层更好？看作图片，AlphaGo中每个情况都可以用48个channel描述，第一层共192个5\*5的fielter，后续层3\*3，但是没有用池化，因为会损失对局细节。
+

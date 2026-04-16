@@ -20,9 +20,9 @@ def parse_args():
     p.add_argument("--per_device_train_batch_size", type=int, default=1)
     p.add_argument("--num_train_epochs", type=int, default=1)
     p.add_argument("--learning_rate", type=float, default=2e-4)
-    p.add_argument("--max_seq_length", type=int, default=512)
-    p.add_argument("--lora_r", type=int, default=32)
-    p.add_argument("--lora_alpha", type=int, default=64)
+    p.add_argument("--max_seq_length", type=int, default=256)
+    p.add_argument("--lora_r", type=int, default=8)
+    p.add_argument("--lora_alpha", type=int, default=16)
     p.add_argument("--lora_dropout", type=float, default=0.05)
     p.add_argument("--system_prompt", default="You are a helpful, concise assistant.")
     p.add_argument("--drop_non_english", type=bool, default=False, help="Skip samples containing obvious non-English text")
@@ -121,7 +121,7 @@ def main():
         num_train_epochs=args.num_train_epochs,
         learning_rate=args.learning_rate,
         logging_steps=10,
-        save_steps=100,
+        save_steps=1000,
         fp16=torch.cuda.is_available(),
         remove_unused_columns=False,
     )

@@ -1,14 +1,7 @@
 {
-  "base_input": "data/train_from_hf_zh_clean.jsonl",
   "output": "data\\train_from_hf_zh_common_20k.jsonl",
-  "base_total": 2292,
-  "base_kept": 2292,
-  "base_truncated": 0,
-  "synthetic_added": 17708,
-  "final_total": 20000,
-  "target_total": 20000,
-  "sources": {
-    "hf_zh": 2292,
-    "synthetic_common_sense_zh": 17708
-  }
+  "max_tokens_rule": 200,
+  "removed_in_strict_second_pass": 0,
+  "final_total": 26324,
+  "max_tokens_after_filter": 200
 }

@@ -39,6 +39,51 @@ def shorten_text(text: str, max_chars: int) -> str:
     return text[:max_chars].rstrip("，,。！？!?；;：:、 ")
 
 
+def remove_boilerplate_phrases(text: str, is_prompt: bool) -> str:
+    text = normalize_text(text)
+    if not text:
+        return text
+
+    # Remove templated fillers that make samples sound unnatural.
+    prompt_phrases = [
+        "请简要回答：",
+        "请直接回答：",
+        "用常识回答：",
+        "给出一个实用建议：",
+        "请从日常经验出发回答：",
+        "请尽量简洁。",
+        "一句话说明即可。",
+        "给新手一个建议。",
+        "优先说最关键的一点。",
+    ]
+    response_phrases = [
+        "常见做法是：",
+        "一般建议：",
+        "实用建议：",
+        "可以这样处理：",
+        "优先处理：",
+        "核心是：",
+        "稳妥做法：",
+        "关键点：",
+        "先做这一步：",
+        "记住这一点：",
+        "先确认后处理：",
+        "别着急，先这样做：",
+        "这样通常更安全。",
+        "这是比较稳妥的做法。",
+        "先保证安全再处理细节。",
+        "必要时请联系专业人士。",
+    ]
+
+    for phrase in (prompt_phrases if is_prompt else response_phrases):
+        text = text.replace(phrase, "")
+
+    text = re.sub(r"\s+", " ", text).strip(" ，,。！？!?；;：:")
+    if not text.endswith(("。", "？", "！", "?", "!")):
+        text = text + "。"
+    return text
+
+
 PROMPT_TEMPLATES = [
     "{topic}时应该怎么做？",
     "如果遇到{topic}，最基本的处理是什么？",
@@ -72,38 +117,13 @@ PROMPT_TEMPLATES = [
     "请给出{topic}的要点。",
 ]
 
-RESPONSE_PREFIXES = [
-    "",
-    "常见做法是：",
-    "一般建议：",
-    "实用建议：",
-    "可以这样处理：",
-]
+RESPONSE_PREFIXES = [""]
 
-PROMPT_PREFIXES = [
-    "",
-    "请简要回答：",
-    "请直接回答：",
-    "用常识回答：",
-    "给出一个实用建议：",
-    "请从日常经验出发回答：",
-]
+PROMPT_PREFIXES = [""]
 
-PROMPT_SUFFIXES = [
-    "",
-    "请尽量简洁。",
-    "一句话说明即可。",
-    "给新手一个建议。",
-    "优先说最关键的一点。",
-]
+PROMPT_SUFFIXES = [""]
 
-RESPONSE_SUFFIXES = [
-    "",
-    "这样通常更安全。",
-    "这是比较稳妥的做法。",
-    "先保证安全再处理细节。",
-    "必要时请联系专业人士。",
-]
+RESPONSE_SUFFIXES = [""]
 
 
 FACTS = [
@@ -208,6 +228,55 @@ FACTS = [
     ("送礼物", "量力而行就好。"),
     ("初次见面", "礼貌问候最稳妥。"),
     ("想拒绝别人", "可以委婉表达。"),
+    ("小区门口洗车", "先把车开到洗车点再清洗。"),
+    ("电动车充电", "用原装或合规充电器，别过夜充电。"),
+    ("雨天开车", "减速慢行并打开近光灯。"),
+    ("雾天开车", "开雾灯并保持更大车距。"),
+    ("手机电量低", "先开省电模式并携带充电宝。"),
+    ("陌生来电要验证码", "不要提供验证码，直接挂断。"),
+    ("快递丢失", "先联系快递和商家登记处理。"),
+    ("楼道有异味", "先开窗并排查是否有燃气泄漏。"),
+    ("厨房油锅起火", "立刻关火并盖锅盖，别泼水。"),
+    ("家里跳闸", "先关闭大功率电器再逐一排查。"),
+    ("下载软件", "优先去官网或应用商店下载。"),
+    ("公共Wi-Fi", "不要进行网银和支付操作。"),
+    ("社交平台私信借钱", "先电话核实身份再决定。"),
+    ("骑车夜行", "打开车灯并穿反光衣物。"),
+    ("遛狗", "拴好牵引绳并随手清理。"),
+    ("扔玻璃", "先包好边缘再投放，防止划伤。"),
+    ("手机进水", "先关机，别充电。"),
+    ("电脑弹出中奖广告", "直接关闭页面，不要填写信息。"),
+    ("银行卡异常扣款", "先冻结卡片并联系银行。"),
+    ("电梯故障停运", "改走楼梯并关注物业通知。"),
+    ("孩子走失", "先报警并原地组织寻找。"),
+    ("夜间独行", "走有灯有人的路线并告知家人。"),
+    ("台风预警", "固定阳台物品并减少外出。"),
+    ("暴雨积水路段", "不要贸然涉水通过。"),
+    ("买生鲜", "看生产日期并冷藏保存。"),
+    ("冰箱异味", "清理过期食物并放除味剂。"),
+    ("手部消毒", "按七步法搓揉至少20秒。"),
+    ("咳嗽打喷嚏", "用纸巾或肘部遮挡口鼻。"),
+    ("饭后散步", "慢走15到30分钟更合适。"),
+    ("久看屏幕", "每20分钟看远处20秒。"),
+    ("外卖到手", "先检查封签是否完好。"),
+    ("网购退货", "保留开箱视频和订单凭证。"),
+    ("租房签约", "核对房东身份和合同条款。"),
+    ("搬家", "先打包易碎品并贴标签。"),
+    ("插线板使用", "不要超负荷接入大功率电器。"),
+    ("家中药品", "按说明保存并定期查有效期。"),
+    ("宠物外出", "更新芯片或佩戴身份牌。"),
+    ("身份证丢失", "先挂失再补办。"),
+    ("手机短信带链接", "不点链接，改走官方入口。"),
+    ("自来水停水后恢复", "先放水几分钟再使用。"),
+    ("雨后地库开车", "慢速通过并观察积水深度。"),
+    ("共享单车", "先检查刹车和轮胎。"),
+    ("取暖器使用", "远离可燃物并定时断电。"),
+    ("燃气热水器", "保持通风，定期检修。"),
+    ("陌生快递到付", "先核实订单再付款。"),
+    ("熬夜", "第二天补觉并减少高强度活动。"),
+    ("晨跑", "先热身再开始。"),
+    ("地震", "就近避险，护住头颈。"),
+    ("看到有人摔倒", "先确认环境安全再施助。"),
 ]
 
 
@@ -240,8 +309,8 @@ def clean_base_rows(rows, max_prompt_chars: int, max_response_chars: int):
     for row in rows:
         prompt = strip_role_prefix(str(row.get("prompt", "")))
         response = strip_role_prefix(str(row.get("response", "")))
-        prompt = shorten_text(prompt, max_prompt_chars)
-        response = shorten_text(response, max_response_chars)
+        prompt = remove_boilerplate_phrases(shorten_text(prompt, max_prompt_chars), is_prompt=True)
+        response = remove_boilerplate_phrases(shorten_text(response, max_response_chars), is_prompt=False)
         if not prompt or not response:
             continue
         key = (prompt.lower(), response.lower())
@@ -271,8 +340,8 @@ def build_common_sense_rows(seen, target_count: int, seed: int = 42):
         resp_suffix = rng.choice(RESPONSE_SUFFIXES)
 
         core_prompt = template.format(topic=topic)
-        prompt_text = f"{prompt_prefix}{core_prompt}{prompt_suffix}".strip()
-        response_text = f"{resp_prefix}{answer}{resp_suffix}".strip()
+        prompt_text = remove_boilerplate_phrases(f"{prompt_prefix}{core_prompt}{prompt_suffix}".strip(), is_prompt=True)
+        response_text = remove_boilerplate_phrases(f"{resp_prefix}{answer}{resp_suffix}".strip(), is_prompt=False)
 
         key = (prompt_text.lower(), response_text.lower())
         if key not in seen:
