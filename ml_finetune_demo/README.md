@@ -134,7 +134,7 @@ python scripts/compare_adapters.py --base_model Qwen/Qwen2.5-0.5B-Instruct --ada
 With only 20 to 30 samples, quality improvement is limited.
 只有 20 到 30 条样本时，效果提升会很有限。
 
-A practical beginner target is 300 to 1000 high-quality English pairs.
+A practical beginner target is 3000 to 100000 high-quality English pairs.
 新手阶段建议目标：至少 3000 到 100000 条高质量中文问答对。
 
 
