@@ -141,4 +141,4 @@ def predict_local_image(image_path, model, device):
     print(f"图片: {image_path} -> 预测数字: {predicted.item()}, 置信度: {confidence.item()*100:.4f}%")
     return predicted.item()
 
-#可以尝试修改成命令行读入图片位置
+#可以尝试修改成命令行读入图片位置，更灵活
