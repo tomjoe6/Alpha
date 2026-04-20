@@ -10,11 +10,11 @@ from typing import cast
 
 BATCH_SIZE = 64
 LEARNING_RATE = 0.001
-EPOCHS = 10
+EPOCHS = 1
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 transform = transforms.Compose(
-    [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+    [transforms.ToTensor(), transforms.Normalize((1,), (1,))]
 )
 
 train_dataset = datasets.MNIST(root='./mnistdata', train=True, download=True, transform=transform)
@@ -104,9 +104,11 @@ if __name__ == '__main__':
     for epoch in range(1, EPOCHS + 1):
         train(model, DEVICE, train_loader, optimizer, criterion, epoch)
         final_accuracy = test(model, DEVICE, test_loader, criterion)
+        
+    path='weights/mnist_cnn_epoch1_1.pth'
 
-    torch.save(model.state_dict(), 'mnist_cnn.pth')
-    print('Model saved to mnist_cnn.pth')
+    torch.save(model.state_dict(), path)
+    print(f'Model saved to {path}')
     print(f'Final Acc:{final_accuracy:.4f}%')
 
 #仅加载权重不训练代码       
