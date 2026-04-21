@@ -13,7 +13,9 @@ if __name__ == '__main__':
     model.load_state_dict(
         torch.load(
             'X:/coding/github/Alpha/MNIST/weights/mnist_cnn_epoch1_1.pth',
+            # 无论权重最初保存在哪个设备, 都映射到当前 DEVICE
             map_location=DEVICE,
+            # 仅加载权重张量, 避免不必要的 pickle 反序列化风险
             weights_only=True,
         )
     )

@@ -14,7 +14,8 @@ EPOCHS = 1
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 transform = transforms.Compose(
-    [transforms.ToTensor(), transforms.Normalize((1,), (1,))]
+    # 训练和推理必须使用同一套归一化策略, 否则分布不一致会掉点
+    [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
 )
 
 train_dataset = datasets.MNIST(root='./mnistdata', train=True, download=True, transform=transform)
@@ -41,6 +42,7 @@ class CNN(nn.Module):
     def forward(self, x):
         x = self.pool(self.relu(self.conv(x)))
         x = self.pool2(self.relu2(self.conv2(x)))
+        # 64*7*7 = 3136
         x = x.view(-1, 3136)
         x = self.relu3(self.fc1(x))
         x = self.dropout(x)
@@ -48,6 +50,7 @@ class CNN(nn.Module):
         return x
 
 def train(model, device, train_loader, optimizer, criterion, epoch):
+    # 切换到训练模式: Dropout 生效
     model.train()
     running_loss = 0.0
     correct = 0
@@ -59,7 +62,9 @@ def train(model, device, train_loader, optimizer, criterion, epoch):
         optimizer.zero_grad()
         output = model(data)
         loss = criterion(output, target)
+        # 反向传播计算梯度
         loss.backward()
+        # 参数更新
         optimizer.step()
 
         running_loss += loss.item()
@@ -73,10 +78,12 @@ def train(model, device, train_loader, optimizer, criterion, epoch):
 
 
 def test(model, device, test_loader, criterion):
+    # 切到评估模式: Dropout 关闭
     model.eval()
     test_loss = 0.0
     correct = 0
 
+    # 测试阶段不需要梯度
     with torch.no_grad():
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
@@ -105,6 +112,7 @@ if __name__ == '__main__':
         train(model, DEVICE, train_loader, optimizer, criterion, epoch)
         final_accuracy = test(model, DEVICE, test_loader, criterion)
         
+    # 只保存权重(推荐), 加载时配合 load_state_dict
     path='weights/mnist_cnn_epoch1_1.pth'
 
     torch.save(model.state_dict(), path)
