@@ -1,4 +1,5 @@
-﻿import os
+﻿import wandb
+import os
 import urllib.request
 
 import torch
@@ -9,15 +10,15 @@ import torch.nn.functional as F
 # -----------------------------
 # Tiny config (nanoGPT minimal)
 # -----------------------------
-batch_size = 32
+batch_size = 1
 block_size = 128
-max_iters = 10000
-eval_interval = 300
-eval_iters = 100
+max_iters = 100000
+eval_interval = 1000
+eval_iters = 128
 learning_rate = 3e-4
 n_embd = 128
 n_head = 4
-n_layer = 4
+n_layer = 8
 dropout = 0.1
 seed = 1337
 
@@ -194,7 +195,7 @@ def main():
 
     num_params = sum(p.numel() for p in model.parameters()) / 1e6
     print(f"device={device}, params={num_params:.2f}M, vocab_size={vocab_size}")
-    path = "model_128_10k.pt"  # Load saved model if it exists
+    path = "model_128_100k_8layer_1batch.pt"  # Load saved model if it exists
     model_path = os.path.join(this_dir, path)
     if os.path.exists(model_path):
         print(f"Loading saved model: {model_path}")
@@ -242,7 +243,7 @@ def main():
             else:
                 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 
-            generated = model.generate(context, max_new_tokens=200)[0].tolist()
+            generated = model.generate(context, max_new_tokens=1000)[0].tolist()
             result = decode(generated)
             print(f"\nGenerated text:\n{result}\n")
 
