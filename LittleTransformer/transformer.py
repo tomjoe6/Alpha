@@ -10,7 +10,7 @@ import torch.nn.functional as F
 # -----------------------------
 # Tiny config (nanoGPT minimal)
 # -----------------------------
-batch_size = 1
+batch_size = 32
 block_size = 128
 max_iters = 100000
 eval_interval = 1000
@@ -195,7 +195,7 @@ def main():
 
     num_params = sum(p.numel() for p in model.parameters()) / 1e6
     print(f"device={device}, params={num_params:.2f}M, vocab_size={vocab_size}")
-    path = "model_128_100k_8layer_1batch.pt"  # Load saved model if it exists
+    path = "model_128_100k_8layer.pt"  # Load saved model if it exists
     model_path = os.path.join(this_dir, path)
     if os.path.exists(model_path):
         print(f"Loading saved model: {model_path}")
