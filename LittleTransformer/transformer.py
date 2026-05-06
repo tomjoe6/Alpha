@@ -21,6 +21,9 @@ n_head = 4
 n_layer = 8
 dropout = 0.1
 seed = 1337
+temperature = 0.8
+top_k = 50
+grad_clip = 1.0
 
 torch.manual_seed(seed)
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -178,11 +181,21 @@ class GPTLanguageModel(nn.Module):
         return logits, loss
 
     @torch.no_grad()
-    def generate(self, idx, max_new_tokens):
+    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
         for _ in range(max_new_tokens):
             idx_cond = idx[:, -block_size:]
             logits, _ = self(idx_cond)
-            logits = logits[:, -1, :]
+            logits = logits[:, -1, :] / max(temperature, 1e-8)
+
+            if top_k is not None and top_k > 0:
+                topk_vals, _ = torch.topk(logits, top_k, dim=-1)
+                cutoff = topk_vals[:, [-1]]
+                logits = torch.where(
+                    logits < cutoff,
+                    torch.full_like(logits, float("-inf")),
+                    logits,
+                )
+
             probs = F.softmax(logits, dim=-1)
             idx_next = torch.multinomial(probs, num_samples=1)
             idx = torch.cat((idx, idx_next), dim=1)
@@ -218,6 +231,7 @@ def main():
         _, loss = model(xb, yb)
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
         optimizer.step()
 
     # Save model checkpoint
@@ -243,7 +257,12 @@ def main():
             else:
                 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 
-            generated = model.generate(context, max_new_tokens=1000)[0].tolist()
+            generated = model.generate(
+                context,
+                max_new_tokens=1000,
+                temperature=temperature,
+                top_k=top_k,
+            )[0].tolist()
             result = decode(generated)
             print(f"\nGenerated text:\n{result}\n")
 
