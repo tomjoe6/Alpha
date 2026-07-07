@@ -163,7 +163,7 @@ Loss Function的优化：Softmax函数与Cross Entropy交叉熵(使用CE默认�
 ### 模型分类  
 #### CNN卷积神经网络：
 应用1 影像识别  
-图片由三维tensor组成————长/宽/channel（RGB三层） 
+图片由三维tensor组成————长/宽/channel（RGB三层）,在第一层卷积中RGB三层由不同卷积核来卷然后相加,得到的是长/宽/channel(**卷积核总数**) 而不是RGB的多通道矩阵
 每个neural分治一小部分receptive field(感受野)，判断一个pattern  
 receptive field大小为kernel size，常见为3*3  
 平移获得另外一个field的距离为stride，一般为1\2让field之间有重叠 ，如果不断按照stride超出影响范围就做padding(补值)，可以补0\补全图平均什么的    
